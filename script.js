@@ -96,34 +96,9 @@ console.log("Financial Analysis")
 console.log("Total months: " + finances.length)
 
 //the net total amount of Profit/Losses over the entire period (all profit minus all losses)
-//filter out the profit
-function SumPositive(finances) {
-  profit = 0;
-  for (var i = 0; i < finances.length; i++) {
-    if (finances[i] > 0) {
-      profit += finances[i];
-    }
-  }
-  return profit;
-}
-//filter out the losses
-function SumNegative(finances) {
-  loss = 0;
-  for (var i = 0; i < finances.length; i++) {
-    if (finances[i] < 0) {
-      loss += finances[i];
-    }
-  }
-  return loss;
-}
-//Deduct losses from profits
-console.log("Net total: " + (SumPositive(finances) - SumNegative(finances))) //Why does this equal zero?
-
-
-
 var total = 0 // the starting sum is set to 0
 for (var i = 0; i < finances.length; i++) {//this loop will keep going as long as i is less than the number of lines in the finances array
-  for (var j = 0; j < finances[i].length; j++) {//at this point i = 1? So will start on line 2?
+  for (var j = 0; j < finances[i].length; j++) {
     if (typeof finances[i][j] !== "string") { //this targets only the data in the array that doesn't equal a string, so just the numbers
       total += finances[i][j]
     }
@@ -131,44 +106,41 @@ for (var i = 0; i < finances.length; i++) {//this loop will keep going as long a
 }
 console.log("Net total: " + total)
 
-var differences = [Number]
-var difference = finances[i] - finances[i - 1];
-
-for (var i = 0; i < finances.length; i++) {
-  for (var j = 0; j < finances[i].length; j++) {
-    differences.push(difference);
-  }
-}
-
-console.log("Average Change: " + (total / finances.length).toFixed(2))
-
-
-
-
-
-
 
 //Calculate the average of the difference in Profit/Losses from month to month over the entire period.
 
-//var difference = 0
-//for (var k = 0; k < 2; i++) {
-  //if (typeof finances[2][1] !== "string") {
-    //total += finances[2][1]
-  //}
-//}
-//console.log("Difference in profit/loss: " + difference)
-//So first work out the difference from month to month
-//I need code that goes through the array line by line, only looking at the non-string (as above) and
-//starting at comparing line 2 to line 1, or setting the starting sum at the non-string index 0
-//Then add those differences up and divide by number of months - this will give me the average amount
-// Does this need to be a for loop?
+//var totalProfitLoss = 0
+var totalChanges = 0
+var prevProfitLoss = 0 //To track the difference between the current profit/loss and the previous one
+var biggestProfitChange = 0
+var biggestProfitChangeDate = "" //since the date is a string
+var biggestLossChange = 0
+var biggestLossChangeDate = "" //as line 119
+var totalChanges //logs all the profit changes 
+var currChange //logs each individual profit change
 
-//track what the total difference in profits is from month to month and then find the average difference
+for (var i = 0; i < finances.length; i++) {
+  currDate = finances[i][0] //current date is the first item in each individual array within the finances array
+  currProfitLoss = finances[i][1] //current profit is the second item in each nested array
+  if (i != 0) {//to get the current change in profit 
+    prevProfitLoss = finances[i - 1][1]
+  }
+  currChange = currProfitLoss - prevProfitLoss
+  if (currChange > biggestProfitChange) {
+    biggestProfitChange = currChange
+    biggestProfitChangeDate = currDate
+  }
+  else if (currChange < biggestLossChange) {
+    biggestLossChange = currChange
+    biggestLossChangeDate = currDate
+  }
+} totalChanges += currChange
+prevProfitLoss = currProfitLoss
 
-//var difference = function (a, b) {
-  //return Math.abs(a - b);
-//}
+//to get the average change in profits:
+console.log("Average change in profits: " + (totalChanges / finances.length).toFixed(2))
 
-  //* (`Total/Number of months`)
-  //The greatest increase in profits (date and amount) over the entire period.
-  //* The greatest decrease in losses (date and amount) over the entire period.
+//The greatest increase in profits (date and amount) over the entire period.
+console.log("The greatest profit increase was in " + biggestProfitChangeDate + " when the increase was " + biggestProfitChange)
+//* The greatest decrease in losses (date and amount) over the entire period.
+console.log("The greatest decrease in profits was in " + biggestLossChangeDate + " when the decrease was " + biggestLossChange)
